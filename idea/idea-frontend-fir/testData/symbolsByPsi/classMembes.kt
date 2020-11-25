@@ -12,6 +12,7 @@ KtFirPropertySymbol:
   hasBackingField: true
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL

@@ -3,6 +3,7 @@ fun <X> foo(x: X) {}
 // SYMBOLS:
 /*
 KtFirTypeParameterSymbol:
+  bounds: [kotlin/Any?]
   name: X
   origin: SOURCE
 

@@ -4,10 +4,12 @@ class A<T, R> {
 // SYMBOLS:
 /*
 KtFirTypeParameterSymbol:
+  bounds: [kotlin/Any?]
   name: T
   origin: SOURCE
 
 KtFirTypeParameterSymbol:
+  bounds: [kotlin/Any?]
   name: R
   origin: SOURCE
 

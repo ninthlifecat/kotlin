@@ -388,6 +388,7 @@ KtFirPropertySymbol:
   hasBackingField: false
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: ABSTRACT

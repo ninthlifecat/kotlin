@@ -11,6 +11,7 @@ KtFirPropertySymbol:
   hasBackingField: true
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL
@@ -23,6 +24,7 @@ KtFirPropertySymbol:
   visibility: PUBLIC
 
 KtFirPropertyGetterSymbol:
+  hasBody: true
   isDefault: false
   isInline: false
   isOverride: false
@@ -39,6 +41,7 @@ KtFirPropertySymbol:
   hasBackingField: false
   isConst: false
   isExtension: true
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL
