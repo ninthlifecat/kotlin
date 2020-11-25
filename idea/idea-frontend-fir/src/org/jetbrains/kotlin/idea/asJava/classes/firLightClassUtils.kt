@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.*
@@ -55,14 +52,18 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? {
 
     return when {
         classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
-        classOrObject.isObjectLiteral() -> return null //TODO
         classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> return null //TODO
         else -> {
             analyze(classOrObject) {
+                val objectLiteral = classOrObject.parent as? KtObjectLiteralExpression
+
+
+
                 val symbol = classOrObject.getClassOrObjectSymbol()
                 when (symbol.classKind) {
                     KtClassKind.INTERFACE -> FirLightInterfaceClassSymbol(symbol, classOrObject.manager)
                     KtClassKind.ANNOTATION_CLASS -> FirLightAnnotationClassSymbol(symbol, classOrObject.manager)
+                    KtClassKind.OBJECT -> FirLightAnonymousClassForSymbol(symbol, classOrObject.manager)
                     else -> FirLightClassForSymbol(symbol, classOrObject.manager)
                 }
             }
