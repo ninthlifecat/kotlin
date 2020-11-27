@@ -17699,6 +17699,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/properties/lazyInitialization.kt");
         }
 
+        @TestMetadata("lazyInitializationCyclicImports.kt")
+        public void testLazyInitializationCyclicImports() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/lazyInitializationCyclicImports.kt");
+        }
+
         @TestMetadata("lazyInitializationMultiModule.kt")
         public void testLazyInitializationMultiModule() throws Exception {
             runTest("compiler/testData/codegen/box/properties/lazyInitializationMultiModule.kt");
@@ -17717,6 +17722,16 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
         @TestMetadata("lazyInitializationSplitPerModule.kt")
         public void testLazyInitializationSplitPerModule() throws Exception {
             runTest("compiler/testData/codegen/box/properties/lazyInitializationSplitPerModule.kt");
+        }
+
+        @TestMetadata("lazyInitializationThroughTopFun.kt")
+        public void testLazyInitializationThroughTopFun() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/lazyInitializationThroughTopFun.kt");
+        }
+
+        @TestMetadata("noInitializationLazilyOnNonPropertiesCall.kt")
+        public void testNoInitializationLazilyOnNonPropertiesCall() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/noInitializationLazilyOnNonPropertiesCall.kt");
         }
 
         @TestMetadata("primitiveOverrideDefaultAccessor.kt")
