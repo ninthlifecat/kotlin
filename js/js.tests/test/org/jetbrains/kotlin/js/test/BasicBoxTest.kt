@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment.fail
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
@@ -87,7 +86,7 @@ abstract class BasicBoxTest(
 
     protected open val runMinifierByDefault: Boolean = false
     protected open val skipMinification = getBoolean("kotlin.js.skipMinificationTest")
-    protected open val reachableNodesOverwrite = getBoolean("kotlin.js.reachableNodesOverwrite")
+    protected open val overwriteReachableNodes = getBoolean(overwriteReachableNodesProperty)
 
     protected open val skipRegularMode: Boolean = false
     protected open val runIrDce: Boolean = false
@@ -332,6 +331,8 @@ abstract class BasicBoxTest(
         file: File
     ) = { reachableNodesCount: Int ->
         val replacement = "// $EXPECTED_REACHABLE_NODES_DIRECTIVE: $reachableNodesCount"
+        val enablingMessage = "To set expected reachable nodes use '$replacement'\n" +
+                "To enable automatic overwriting reachable nodes use property '-Pfd.$overwriteReachableNodesProperty=true'"
         if (expectedReachableNodesFound) {
             val expectedReachableNodes = expectedReachableNodesMatcher.group(1).toInt()
             val minThreshold = expectedReachableNodes * 9 / 10
@@ -340,25 +341,27 @@ abstract class BasicBoxTest(
 
                 val message = "Number of reachable nodes ($reachableNodesCount) does not fit into expected range " +
                         "[$minThreshold; $maxThreshold]"
-                if (reachableNodesOverwrite) {
-                    val newText = fileContent.substring(0, expectedReachableNodesMatcher.start()) +
-                            replacement +
-                            fileContent.substring(expectedReachableNodesMatcher.end())
-                    file.writeText(newText)
-                } else {
-                    println(message)
-                }
+                val additionalMessage: String =
+                    if (overwriteReachableNodes) {
+                        val newText = fileContent.substring(0, expectedReachableNodesMatcher.start()) +
+                                replacement +
+                                fileContent.substring(expectedReachableNodesMatcher.end())
+                        file.writeText(newText)
+                        ""
+                    } else {
+                        "\n$enablingMessage"
+                    }
 
-                fail(message)
+                fail("$message$additionalMessage")
             }
         } else {
-            val message = "The number of expected reachable nodes was not set. Actual reachable nodes: $reachableNodesCount"
+            val baseMessage = "The number of expected reachable nodes was not set. Actual reachable nodes: $reachableNodesCount."
 
-            if (reachableNodesOverwrite) {
+            if (overwriteReachableNodes) {
                 file.writeText("$replacement\n$fileContent")
-                fail(message)
+                fail(baseMessage)
             } else {
-                println(message)
+                println("$baseMessage\n$enablingMessage")
             }
         }
     }
@@ -1067,6 +1070,8 @@ abstract class BasicBoxTest(
         private val engineForMinifier =
             if (runTestInNashorn) ScriptEngineNashorn()
             else ScriptEngineV8Lazy(KotlinTestUtils.tmpDirForReusableFolder("j2v8_library_path").path)
+
+        const val overwriteReachableNodesProperty = "kotlin.js.overwriteReachableNodes"
     }
 }
 
