@@ -3,10 +3,18 @@
 //KT-42357
 
 // FILE: main.kt
-external class FieldPath(
-    arg: Int = definedExternally,
-    vararg args: String
-)
+external class FieldPath {
+    constructor(
+        arg: Int = definedExternally,
+        vararg args: String
+    )
+
+    constructor(
+        arg: Int = definedExternally,
+        vararg args: String,
+        o: Long
+    )
+}
 
 external val ctorCallArgs: Array<String>
 
@@ -32,6 +40,22 @@ fun box(): String {
     FieldPath(5, args = *arrayOf("p0", "p1"))
     if (ctorCallArgs.size != 3 || js("typeof ctorCallArgs[0] !== 'number'") || js("typeof ctorCallArgs[1] !== 'string'"))
         return "fail5: $ctorCallArgs arguments"
+
+    FieldPath(42, "a", "b", "c", o = 99L)
+    if (ctorCallArgs.size != 5 || js("typeof ctorCallArgs[0] !== 'number'") || js("typeof ctorCallArgs[1] !== 'string'"))
+        return "fail6: $ctorCallArgs arguments"
+
+    FieldPath(5, args = *arrayOf("p0", "p1"), o = 87L)
+    if (ctorCallArgs.size != 4 || js("typeof ctorCallArgs[0] !== 'number'") || js("typeof ctorCallArgs[1] !== 'string'"))
+        return "fail6: $ctorCallArgs arguments"
+
+    FieldPath(4, *arrayOf("p0", "p1"), o = 99L)
+    if (ctorCallArgs.size != 4 || js("typeof ctorCallArgs[0] !== 'number'") || js("typeof ctorCallArgs[1] !== 'string'"))
+        return "fail7: $ctorCallArgs arguments"
+
+    FieldPath(11, *arrayOf(), o = 123456L)
+    if (ctorCallArgs.size != 2 || js("typeof ctorCallArgs[0] !== 'number'"))
+        return "fail9: $ctorCallArgs arguments"
 
     return "OK"
 }
