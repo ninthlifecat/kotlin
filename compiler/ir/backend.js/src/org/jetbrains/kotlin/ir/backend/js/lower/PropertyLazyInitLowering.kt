@@ -226,7 +226,7 @@ class RemoveInitializersForLazyProperties(
 
         if (declaration !is IrField) return null
 
-        if (declaration.origin !in compatibleOrigins) return null
+        if (!declaration.isCompatibleDeclaration()) return null
 
         val file = declaration.parent as? IrFile ?: return null
 
@@ -261,7 +261,7 @@ class RemoveInitializersForLazyProperties(
 private fun calculateFieldToExpression(declarations: Collection<IrDeclaration>): Map<IrField, IrExpression> =
     declarations
         .asSequence()
-        .filter { it.origin in compatibleOrigins }
+        .filter { it.isCompatibleDeclaration() }
         .map { it.correspondingProperty }
         .filterNotNull()
         .filter { it.isForLazyInit() }
@@ -294,6 +294,10 @@ private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.()
     if (((this as? PersistentIrElementBase<*>)?.createdOn ?: 0) <= stageController.currentStage) {
         transform()
     } else null
+
+private fun IrDeclaration.isCompatibleDeclaration() =
+    (this as? PersistentIrElementBase<*>)?.createdOn?.let { it == 0 }
+            ?: origin in compatibleOrigins
 
 private val compatibleOrigins = listOf(
     IrDeclarationOrigin.DEFINED,
